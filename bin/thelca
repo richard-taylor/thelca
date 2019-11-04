@@ -1,0 +1,33 @@
+
+import argparse
+import http.server
+import logging
+
+# parse the command-line
+parser = argparse.ArgumentParser(description='thelca')
+    
+parser.add_argument('-p', '--port', 
+    help='port number to listen on (default %(default)s)',
+    default=2207, type=int)
+    
+args = parser.parse_args()
+
+# turn on logging
+logging.basicConfig(
+    format='%(asctime)s %(levelname)s %(message)s',
+    level=logging.INFO)
+
+# apply command-line parameters to a HTTP server
+try:
+    import thelca.http
+
+    logging.info('Starting a server on port ' + str(args.port))
+    server = http.server.HTTPServer(('', args.port), thelca.http.Handler)
+
+    logging.info('Entering the server loop')
+    server.serve_forever()
+    
+except KeyboardInterrupt:
+    logging.info('Shutting down the server')
+    server.shutdown()
+    server.server_close()
