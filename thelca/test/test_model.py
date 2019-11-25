@@ -8,7 +8,7 @@ class TestModel(unittest.TestCase):
         self.user = User(self.root)
 
     def test_empty_item(self):
-        item = Item();
+        item = Item()
 
         self.assertTrue(item.id is None)
         self.assertTrue(item.created_at is None)
@@ -16,7 +16,7 @@ class TestModel(unittest.TestCase):
         self.assertTrue(item.properties is None)
 
     def test_create_item(self):
-        item = Item(self.user, {'TYPE': 'EPIC', 'DESCRIPTION': 'big'});
+        item = Item(self.user, {'TYPE': 'EPIC', 'DESCRIPTION': 'big'})
 
         self.assertFalse(item.id is None)
         self.assertFalse(item.created_at is None)
@@ -25,7 +25,7 @@ class TestModel(unittest.TestCase):
         self.assertEqual('big', item.properties['DESCRIPTION'])
 
     def test_empty_link(self):
-        link = Link();
+        link = Link()
 
         self.assertTrue(link.id is None)
         self.assertTrue(link.created_at is None)
@@ -38,7 +38,7 @@ class TestModel(unittest.TestCase):
         item1 = Item(self.user)
         item2 = Item(self.user)
 
-        link = Link(self.user, item1, item2, {'TYPE': 'EXPLAINS'});
+        link = Link(self.user, item1, item2, {'TYPE': 'EXPLAINS'})
 
         self.assertFalse(link.id is None)
         self.assertFalse(link.created_at is None)
@@ -48,14 +48,14 @@ class TestModel(unittest.TestCase):
         self.assertEqual('EXPLAINS', link.properties['TYPE'])
 
     def test_create_root_user(self):
-        root_user = User();
+        root_user = User()
 
         self.assertEqual('root', root_user.id)
         self.assertTrue(root_user.created_at is None)
         self.assertTrue(root_user.created_by is None)
 
     def test_create_normal_user(self):
-        normal_user = User(self.root);
+        normal_user = User(self.root)
 
         self.assertFalse(normal_user.id is None)
         self.assertFalse(normal_user.created_at is None)
