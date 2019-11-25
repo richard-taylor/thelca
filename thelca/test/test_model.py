@@ -13,16 +13,15 @@ class TestModel(unittest.TestCase):
         self.assertTrue(item.id is None)
         self.assertTrue(item.created_at is None)
         self.assertTrue(item.created_by is None)
-        self.assertTrue(item.type is None)
         self.assertTrue(item.properties is None)
 
     def test_create_item(self):
-        item = Item(self.user, 'EPIC', {'DESCRIPTION': 'big'});
+        item = Item(self.user, {'TYPE': 'EPIC', 'DESCRIPTION': 'big'});
 
         self.assertFalse(item.id is None)
         self.assertFalse(item.created_at is None)
         self.assertEqual(self.user.id, item.created_by)
-        self.assertEqual('EPIC', item.type)
+        self.assertEqual('EPIC', item.properties['TYPE'])
         self.assertEqual('big', item.properties['DESCRIPTION'])
 
     def test_empty_link(self):
@@ -31,22 +30,22 @@ class TestModel(unittest.TestCase):
         self.assertTrue(link.id is None)
         self.assertTrue(link.created_at is None)
         self.assertTrue(link.created_by is None)
-        self.assertTrue(link.type is None)
         self.assertTrue(link.src is None)
         self.assertTrue(link.dest is None)
+        self.assertTrue(link.properties is None)
 
     def test_create_link(self):
         item1 = Item(self.user)
         item2 = Item(self.user)
 
-        link = Link(self.user, 'EXPLAINS', item1, item2);
+        link = Link(self.user, item1, item2, {'TYPE': 'EXPLAINS'});
 
         self.assertFalse(link.id is None)
         self.assertFalse(link.created_at is None)
         self.assertEqual(self.user.id, link.created_by)
-        self.assertEqual('EXPLAINS', link.type)
         self.assertEqual(item1.id, link.src)
         self.assertEqual(item2.id, link.dest)
+        self.assertEqual('EXPLAINS', link.properties['TYPE'])
 
     def test_create_root_user(self):
         root_user = User();
