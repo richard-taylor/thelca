@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timezone
 import uuid
 
 class Trackable:
@@ -10,7 +10,7 @@ class Trackable:
         else:
             self.id = str(uuid.uuid4())
             self.created_by = created_by.id
-            self.created_at = datetime.datetime.utcnow().isoformat()
+            self.created_at = datetime.now(timezone.utc).isoformat()
 
 class Item(Trackable):
     def __init__(self, created_by = None, properties = None):
