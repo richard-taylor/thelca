@@ -8,7 +8,7 @@ class TranslationError(Exception):
 class JSON:
 
     def from_item(self, item):
-        return json.dumps(vars(item))
+        return json.dumps(vars(item), sort_keys=True)
 
     def to_item(self, string):
         item = Item()
