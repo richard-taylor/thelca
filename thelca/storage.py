@@ -1,3 +1,6 @@
+class ItemNotFound(Exception):
+    pass
+
 class MemoryStore:
     def __init__(self):
         self.items = {}
@@ -6,7 +9,7 @@ class MemoryStore:
         try:
             return self.items[id]
         except KeyError:
-            return None
+            raise ItemNotFound()
 
     def save_item(self, item):
         self.items[item.id] = item

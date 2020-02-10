@@ -6,7 +6,6 @@ class TestTranslator(unittest.TestCase):
 
     def setUp(self):
         self.root = User()
-        self.user = User(self.root)
         self.translate = JSON()
 
     def test_empty_item_to_json(self):
