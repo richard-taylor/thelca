@@ -1,5 +1,4 @@
-class ItemNotFound(Exception):
-    pass
+from thelca.error import ItemNotFound
 
 class MemoryStore:
     def __init__(self):

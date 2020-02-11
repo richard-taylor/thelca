@@ -1,18 +1,10 @@
 import json
 
+from thelca.error import NotAuthorisedError, NotSavedError
 from thelca.model import Item, User
 from thelca.storage import MemoryStore
 
 storage = MemoryStore()
-
-class NotAuthorisedError(Exception):
-    pass
-
-class NotFoundError(Exception):
-    pass
-
-class NotSavedError(Exception):
-    pass
 
 class API:
     def __init__(self, version):
@@ -28,10 +20,7 @@ class API:
         if requesting_user is None:
             raise NotAuthorisedError()
 
-        item = storage.find_item(id)
-        if item is None:
-            raise NotFoundError()
-        return item
+        return storage.find_item(id)
 
     def create_item(self, item, requesting_user):
         if requesting_user is None:

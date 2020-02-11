@@ -1,5 +1,7 @@
+from thelca.error import ItemNotFound
 from thelca.model import Item, User
-from thelca.storage import MemoryStore, ItemNotFound
+from thelca.storage import MemoryStore
+
 import unittest
 
 class TestStorage(unittest.TestCase):

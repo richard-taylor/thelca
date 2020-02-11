@@ -1,7 +1,10 @@
 import http.server
+from http import HTTPStatus
 
-from thelca.api import API, NotFoundError
+from thelca.api import API
 api = API('1.0.0')
+
+from thelca.error import NotFoundError, NotSavedError
 
 from thelca.translator import JSON, TranslationError
 translate = JSON()
@@ -18,7 +21,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         return api.default_user()
 
     def send_json(self, json):
-        self.send_response(http.HTTPStatus.OK)
+        self.send_response(HTTPStatus.OK)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
         self.wfile.write(json.encode('utf-8'))
@@ -41,7 +44,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 return
             except NotFoundError:
                 pass
-        self.send_error(http.HTTPStatus.NOT_FOUND)
+        self.send_error(HTTPStatus.NOT_FOUND)
 
     def do_POST(self):
         if self.path == '/v1/items':
@@ -52,8 +55,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 self.send_json(translate.from_item(item))
                 return
             except TranslationError as error:
-                self.send_error(http.HTTPStatus.BAD_REQUEST, str(error))
+                self.send_error(HTTPStatus.BAD_REQUEST, str(error))
             except NotSavedError as error:
-                self.send_error(http.HTTPStatus.SERVICE_UNAVAILABLE, str(error))
+                self.send_error(HTTPStatus.SERVICE_UNAVAILABLE, str(error))
         else:
-            self.send_error(http.HTTPStatus.NOT_FOUND)
+            self.send_error(HTTPStatus.NOT_FOUND)
