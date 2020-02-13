@@ -36,3 +36,6 @@ class TestStorage(unittest.TestCase):
         self.store.save_item(item2)
 
         self.assertRaises(ItemNotFound, self.store.find_item, 'not-an-id')
+
+if __name__ == '__main__':
+    unittest.main()

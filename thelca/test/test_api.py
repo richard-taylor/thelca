@@ -42,3 +42,6 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(new_item.created_at, same_item.created_at)
         self.assertEqual(self.user.id, same_item.created_by)
         self.assertEqual('BUG', same_item.properties['type'])
+
+if __name__ == '__main__':
+    unittest.main()

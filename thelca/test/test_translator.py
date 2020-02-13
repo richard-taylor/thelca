@@ -36,3 +36,6 @@ class TestTranslator(unittest.TestCase):
         self.assertTrue(isinstance(item, Item))
         self.assertEqual("1234", item.id)
         self.assertEqual("EPIC", item.properties['type'])
+
+if __name__ == '__main__':
+    unittest.main()
