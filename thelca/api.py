@@ -27,9 +27,14 @@ class API:
             raise NotAuthorisedError()
 
         if item.id is not None:
-            raise NotSavedError("The Item already has an ID")
-        else:
-            item.mark_creation(requesting_user)
+            raise NotSavedError("id cannot be set externally")
 
+        if item.created_at is not None:
+            raise NotSavedError("created_at cannot be set externally")
+
+        if item.created_by is not None:
+            raise NotSavedError("created_by cannot be set externally")
+
+        item.mark_creation(requesting_user)
         storage.save_item(item)
         return item

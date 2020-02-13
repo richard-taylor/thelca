@@ -57,6 +57,6 @@ class Handler(http.server.BaseHTTPRequestHandler):
             except TranslationError as error:
                 self.send_error(HTTPStatus.BAD_REQUEST, str(error))
             except NotSavedError as error:
-                self.send_error(HTTPStatus.SERVICE_UNAVAILABLE, str(error))
+                self.send_error(HTTPStatus.BAD_REQUEST, str(error))
         else:
             self.send_error(HTTPStatus.NOT_FOUND)
