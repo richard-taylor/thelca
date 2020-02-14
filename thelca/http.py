@@ -50,8 +50,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if self.path == '/v1/items':
             json = self.receive_json()
             try:
-                item = translate.to_item(json)
-                item = api.create_item(item, self.user())
+                dict = translate.to_dictionary(json)
+                item = api.create_item(dict, self.user())
                 self.send_json(translate.from_item(item))
                 return
             except TranslationError as error:

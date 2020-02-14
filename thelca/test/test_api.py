@@ -20,17 +20,16 @@ class TestAPI(unittest.TestCase):
 
     def test_create_item_exception_with_no_user(self):
         self.assertRaises(NotAuthorisedError,
-                          self.api.create_item, Item(), None)
+                          self.api.create_item, {}, None)
 
     def test_create_item_exception_if_id_exists(self):
         self.assertRaises(NotSavedError,
-                          self.api.create_item, Item(self.user), self.user)
+                          self.api.create_item, {'id': 0}, self.user)
 
     def test_create_item_and_recover_it(self):
-        empty_item = Item()
-        empty_item.properties = {"type": "BUG"}
+        dictionary = {'properties': {'type': 'BUG'}}
 
-        new_item = self.api.create_item(empty_item, self.user)
+        new_item = self.api.create_item(dictionary, self.user)
 
         self.assertFalse(new_item.id is None)
         self.assertFalse(new_item.created_at is None)

@@ -22,19 +22,23 @@ class API:
 
         return storage.find_item(id)
 
-    def create_item(self, item, requesting_user):
+    def create_item(self, dictionary, requesting_user):
         if requesting_user is None:
             raise NotAuthorisedError()
 
-        if item.id is not None:
+        if 'id' in dictionary:
             raise NotSavedError("id cannot be set externally")
 
-        if item.created_at is not None:
+        if 'created_at' in dictionary:
             raise NotSavedError("created_at cannot be set externally")
 
-        if item.created_by is not None:
+        if 'created_by' in dictionary:
             raise NotSavedError("created_by cannot be set externally")
 
-        item.mark_creation(requesting_user)
+        if 'properties' in dictionary:
+            item = Item(requesting_user, dictionary['properties'])
+        else:
+            item = Item(requesting_user)
+
         storage.save_item(item)
         return item

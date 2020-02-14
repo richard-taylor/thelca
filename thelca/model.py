@@ -8,12 +8,9 @@ class Trackable:
             self.created_by = None
             self.created_at = None
         else:
-            self.mark_creation(created_by)
-
-    def mark_creation(self, creator):
-        self.id = str(uuid.uuid4())
-        self.created_by = creator.id
-        self.created_at = datetime.now(timezone.utc).isoformat()
+            self.id = str(uuid.uuid4())
+            self.created_by = created_by.id
+            self.created_at = datetime.now(timezone.utc).isoformat()
 
 class Item(Trackable):
     def __init__(self, created_by = None, properties = None):

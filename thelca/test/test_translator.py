@@ -8,6 +8,14 @@ class TestTranslator(unittest.TestCase):
         self.root = User()
         self.translate = JSON()
 
+    def test_valid_json_to_dict(self):
+        dict = self.translate.to_dictionary('{"a": "b"}')
+        self.assertDictEqual({'a': 'b'}, dict)
+
+    def test_invalid_json_to_dict(self):
+        self.assertRaises(TranslationError,
+                          self.translate.to_dictionary, 'not json')
+
     def test_empty_item_to_json(self):
         item = Item()
         json = self.translate.from_item(item)

@@ -7,6 +7,12 @@ class TranslationError(Exception):
 
 class JSON:
 
+    def to_dictionary(self, string):
+        try:
+            return json.loads(string)
+        except json.JSONDecodeError:
+            raise TranslationError("The data is not a JSON string")
+
     def from_item(self, item):
         return json.dumps(vars(item), sort_keys=True)
 
