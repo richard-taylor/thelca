@@ -45,5 +45,13 @@ class TestTranslator(unittest.TestCase):
         self.assertEqual("1234", item.id)
         self.assertEqual("EPIC", item.properties['type'])
 
+    def test_json_to_item_ignores_extra_fields(self):
+        json = '{"id": "1234", "bogus": "rubbish"}'
+        item = self.translate.to_item(json)
+
+        self.assertTrue(isinstance(item, Item))
+        self.assertEqual("1234", item.id)
+        self.assertNotIn("bogus", item.__dict__)
+
 if __name__ == '__main__':
     unittest.main()

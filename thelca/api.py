@@ -42,3 +42,21 @@ class API:
 
         storage.save_item(item)
         return item
+
+    def update_item(self, id, item, requesting_user):
+        if requesting_user is None:
+            raise NotAuthorisedError()
+
+        current = storage.find_item(id)
+
+        if current.id != item.id:
+            raise NotSavedError("id cannot be modified")
+
+        if current.created_at != item.created_at:
+            raise NotSavedError("created_at cannot be modified")
+
+        if current.created_by != item.created_by:
+            raise NotSavedError("created_by cannot be modified")
+
+        storage.save_item(item)
+        return item

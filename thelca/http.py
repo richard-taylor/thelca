@@ -60,3 +60,21 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 self.send_error(HTTPStatus.BAD_REQUEST, str(error))
         else:
             self.send_error(HTTPStatus.NOT_FOUND)
+
+    def do_PUT(self):
+        if self.path.startswith('/v1/items/'):
+            id = self.path[10:]
+            json = self.receive_json()
+            try:
+                item = translate.to_item(json)
+                api.update_item(id, item, self.user())
+                self.send_json(translate.from_item(item))
+                return
+            except TranslationError as error:
+                self.send_error(HTTPStatus.BAD_REQUEST, str(error))
+            except NotFoundError:
+                self.send_error(HTTPStatus.NOT_FOUND)
+            except NotSavedError as error:
+                self.send_error(HTTPStatus.BAD_REQUEST, str(error))
+        else:
+            self.send_error(HTTPStatus.NOT_FOUND)

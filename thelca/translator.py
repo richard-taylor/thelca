@@ -19,7 +19,10 @@ class JSON:
     def to_item(self, string):
         item = Item()
         try:
-            item.__dict__.update(json.loads(string))
+            dictionary = json.loads(string)
+            for key in vars(item):
+                if key in dictionary:
+                    item.__dict__[key] = dictionary[key]
             return item
         except json.JSONDecodeError:
             raise TranslationError("The data is not a JSON string")
