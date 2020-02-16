@@ -1,11 +1,10 @@
-from thelca.model import Item, Link, User
+from thelca.model import Item, Link
 import unittest
 
 class TestModel(unittest.TestCase):
 
     def setUp(self):
-        self.root = User()
-        self.user = User(self.root)
+        self.user = 'dummy-user-id'
 
     def test_empty_item(self):
         item = Item()
@@ -20,7 +19,7 @@ class TestModel(unittest.TestCase):
 
         self.assertFalse(item.id is None)
         self.assertFalse(item.created_at is None)
-        self.assertEqual(self.user.id, item.created_by)
+        self.assertEqual(self.user, item.created_by)
         self.assertEqual('EPIC', item.properties['TYPE'])
         self.assertEqual('big', item.properties['DESCRIPTION'])
 
@@ -42,24 +41,10 @@ class TestModel(unittest.TestCase):
 
         self.assertFalse(link.id is None)
         self.assertFalse(link.created_at is None)
-        self.assertEqual(self.user.id, link.created_by)
+        self.assertEqual(self.user, link.created_by)
         self.assertEqual(item1.id, link.src)
         self.assertEqual(item2.id, link.dest)
         self.assertEqual('EXPLAINS', link.properties['TYPE'])
-
-    def test_create_root_user(self):
-        root_user = User()
-
-        self.assertEqual('root', root_user.id)
-        self.assertTrue(root_user.created_at is None)
-        self.assertTrue(root_user.created_by is None)
-
-    def test_create_normal_user(self):
-        normal_user = User(self.root)
-
-        self.assertFalse(normal_user.id is None)
-        self.assertFalse(normal_user.created_at is None)
-        self.assertEqual(self.root.id, normal_user.created_by)
 
 if __name__ == '__main__':
     unittest.main()

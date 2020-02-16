@@ -1,33 +1,35 @@
 
 import argparse
 import http.server
-import logging
+
+from thelca.http import Handler
+from thelca.logging import EventLogger
 
 # parse the command-line
 parser = argparse.ArgumentParser(description='thelca')
-    
-parser.add_argument('-p', '--port', 
+
+parser.add_argument('-l', '--logfile',
+    help='file to store the event log in (default %(default)s)',
+    default='thelca-events.log')
+
+parser.add_argument('-p', '--port',
     help='port number to listen on (default %(default)s)',
     default=2207, type=int)
-    
-args = parser.parse_args()
 
-# turn on logging
-logging.basicConfig(
-    format='%(asctime)s %(levelname)s %(message)s',
-    level=logging.INFO)
+parser.add_argument('-r', '--restore',
+    help='restore all data from the event log (default %(default)s)',
+    default=False, type=bool)
+
+args = parser.parse_args()
+logging = EventLogger(args.logfile)
 
 # apply command-line parameters to a HTTP server
 try:
-    import thelca.http
-
-    logging.info('Starting a server on port ' + str(args.port))
-    server = http.server.HTTPServer(('', args.port), thelca.http.Handler)
-
-    logging.info('Entering the server loop')
+    logging.server_start(args)
+    server = http.server.HTTPServer(('', args.port), Handler)
     server.serve_forever()
-    
+
 except KeyboardInterrupt:
-    logging.info('Shutting down the server')
+    logging.server_stop()
     server.shutdown()
     server.server_close()

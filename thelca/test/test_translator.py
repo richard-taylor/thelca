@@ -1,12 +1,13 @@
-from thelca.model import Item, User
+from thelca.model import Item
 from thelca.translator import JSON, TranslationError
+
 import unittest
 
 class TestTranslator(unittest.TestCase):
 
     def setUp(self):
-        self.root = User()
         self.translate = JSON()
+        self.user = 'the-user-id'
 
     def test_valid_json_to_dict(self):
         dict = self.translate.to_dictionary('{"a": "b"}')
@@ -23,11 +24,11 @@ class TestTranslator(unittest.TestCase):
         self.assertEqual('{"created_at": null, "created_by": null, "id": null, "properties": null}', json)
 
     def test_item_to_json(self):
-        item = Item(self.root, {'type': 'STORY'})
+        item = Item(self.user, {'type': 'STORY'})
         json = self.translate.from_item(item)
 
         self.assertTrue('"created_at": "' in json)
-        self.assertTrue('"created_by": "root"' in json)
+        self.assertTrue('"created_by": "the-user-id"' in json)
         self.assertTrue('"id": "' in json)
         self.assertTrue('"properties": {"type": "STORY"}' in json)
 

@@ -1,0 +1,21 @@
+from thelca.error import NotAuthorisedError
+
+class Authority:
+    '''
+    This is the interface to an OpenID service like keycloak.
+    '''
+
+    def check_create_item(self, token, dictionary):
+        return self.user_id_from_token(token)
+
+    def check_read_item(self, token, item):
+        return self.user_id_from_token(token)
+
+    def check_update_item(self, token, current, proposed):
+        return self.user_id_from_token(token)
+
+    def user_id_from_token(self, token):
+        if token is None or token == 'BAAD':
+            raise NotAuthorisedError()
+        else:
+            return "a-test-only-id-" + token

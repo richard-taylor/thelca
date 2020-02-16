@@ -1,30 +1,28 @@
 import json
 
-from thelca.error import NotAuthorisedError, NotSavedError
-from thelca.model import Item, User
+from thelca.auth import Authority
+from thelca.error import NotSavedError
+from thelca.model import Item
+from thelca.logging import EventLogger
 from thelca.storage import MemoryStore
 
+authority = Authority()
+logging = EventLogger()
 storage = MemoryStore()
 
 class API:
     def __init__(self, version):
         self.version = version
-        self.root = User()
-        self.user = User(self.root)
-        self.user.name = 'Reginald Dustbin'
 
-    def default_user(self):
-        return self.user
+    def get_item(self, id, token):
+        item = storage.find_item(id)
+        user = authority.check_read_item(token, item)
 
-    def get_item(self, id, requesting_user):
-        if requesting_user is None:
-            raise NotAuthorisedError()
+        logging.item_read(item, user)
+        return item
 
-        return storage.find_item(id)
-
-    def create_item(self, dictionary, requesting_user):
-        if requesting_user is None:
-            raise NotAuthorisedError()
+    def create_item(self, dictionary, token):
+        user = authority.check_create_item(token, dictionary)
 
         if 'id' in dictionary:
             raise NotSavedError("id cannot be set externally")
@@ -36,18 +34,17 @@ class API:
             raise NotSavedError("created_by cannot be set externally")
 
         if 'properties' in dictionary:
-            item = Item(requesting_user, dictionary['properties'])
+            item = Item(user, dictionary['properties'])
         else:
-            item = Item(requesting_user)
+            item = Item(user)
 
         storage.save_item(item)
+        logging.item_created(item, user)
         return item
 
-    def update_item(self, id, item, requesting_user):
-        if requesting_user is None:
-            raise NotAuthorisedError()
-
+    def update_item(self, id, item, token):
         current = storage.find_item(id)
+        user = authority.check_update_item(token, current, item)
 
         if current.id != item.id:
             raise NotSavedError("id cannot be modified")
@@ -59,4 +56,5 @@ class API:
             raise NotSavedError("created_by cannot be modified")
 
         storage.save_item(item)
+        logging.item_updated(item, user)
         return item

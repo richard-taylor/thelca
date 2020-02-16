@@ -1,5 +1,5 @@
 from thelca.error import ItemNotFound
-from thelca.model import Item, User
+from thelca.model import Item
 from thelca.storage import MemoryStore
 
 import unittest
@@ -7,12 +7,12 @@ import unittest
 class TestStorage(unittest.TestCase):
 
     def setUp(self):
-        self.root = User()
         self.store = MemoryStore()
+        self.user = '1-2-3-4'
 
     def test_save_item_and_find_item(self):
-        item1 = Item(self.root, {"type": "ABC"})
-        item2 = Item(self.root, {"type": "123"})
+        item1 = Item(self.user, {"type": "ABC"})
+        item2 = Item(self.user, {"type": "123"})
 
         self.store.save_item(item1)
         self.store.save_item(item2)
@@ -29,8 +29,8 @@ class TestStorage(unittest.TestCase):
         self.assertEqual('123', found2.properties['type'])
 
     def test_find_non_existent_item(self):
-        item1 = Item(self.root, {"type": "ABC"})
-        item2 = Item(self.root, {"type": "123"})
+        item1 = Item(self.user, {"type": "ABC"})
+        item2 = Item(self.user, {"type": "123"})
 
         self.store.save_item(item1)
         self.store.save_item(item2)

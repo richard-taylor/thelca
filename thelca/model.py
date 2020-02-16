@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
 import uuid
+from thelca.time import current_time_UTC
 
 class Trackable:
     def __init__(self, created_by):
@@ -9,8 +9,8 @@ class Trackable:
             self.created_at = None
         else:
             self.id = str(uuid.uuid4())
-            self.created_by = created_by.id
-            self.created_at = datetime.now(timezone.utc).isoformat()
+            self.created_by = created_by
+            self.created_at = current_time_UTC()
 
 class Item(Trackable):
     def __init__(self, created_by = None, properties = None):
@@ -23,9 +23,3 @@ class Link(Trackable):
         self.src = None if src is None else src.id
         self.dest = None if dest is None else dest.id
         self.properties = properties
-
-class User(Trackable):
-    def __init__(self, created_by = None):
-        super().__init__(created_by)
-        if created_by is None:
-            self.id = 'root'
