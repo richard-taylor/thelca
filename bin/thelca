@@ -18,12 +18,15 @@ parser.add_argument('-p', '--port',
 
 parser.add_argument('-r', '--restore',
     help='restore all data from the event log (default %(default)s)',
-    default=False, type=bool)
+    action='store_true')
 
 args = parser.parse_args()
-logging = EventLogger(args.logfile)
 
-# apply command-line parameters to a HTTP server
+if args.restore:
+    import thelca.restore
+    thelca.restore.from_event_log(args.logfile)
+
+logging = EventLogger(args.logfile)
 try:
     logging.server_start(args)
     server = http.server.HTTPServer(('', args.port), Handler)
