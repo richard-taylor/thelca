@@ -1,3 +1,4 @@
+from copy import deepcopy
 from thelca.error import ItemNotFound
 from thelca.model import Item
 from thelca.storage import MemoryStore
@@ -27,6 +28,21 @@ class TestStorage(unittest.TestCase):
         self.assertTrue(isinstance(found2, Item))
         self.assertEqual(item2.id, found2.id)
         self.assertEqual('123', found2.properties['type'])
+
+    def test_modify_item(self):
+        original_item = Item(self.user, {"type": "ABC"})
+
+        self.store.save_item(original_item)
+
+        new_item = deepcopy(original_item)
+        new_item.properties['type'] = 'DEF'
+
+        self.store.modify_item(original_item, new_item)
+
+        changed = self.store.find_item(original_item.id)
+
+        self.assertTrue(isinstance(changed, Item))
+        self.assertEqual('DEF', changed.properties['type'])
 
     def test_find_non_existent_item(self):
         item1 = Item(self.user, {"type": "ABC"})

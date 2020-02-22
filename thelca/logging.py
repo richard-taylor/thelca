@@ -37,6 +37,6 @@ class EventLogger:
         event = Event("Item read", item, user)
         logging.critical(event.json())
 
-    def item_updated(self, item, user):
-        event = Event("Item updated", item, user)
+    def item_updated(self, old_item, new_item, user):
+        event = Event("Item updated", new_item, user)
         logging.critical(event.json())

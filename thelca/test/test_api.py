@@ -14,14 +14,14 @@ class TestAPI(unittest.TestCase):
         self.api = API('1.0')
         self.token = 'ABCD'
 
-    def test_get_item_exception_with_no_token(self):
+    def test_read_item_exception_with_no_token(self):
         item = self.api.create_item({}, self.token)
         self.assertRaises(NotAuthorisedError,
-                          self.api.get_item, item.id, None)
+                          self.api.read_item, item.id, None)
 
-    def test_get_item_exception_if_non_existent(self):
+    def test_read_item_exception_if_non_existent(self):
         self.assertRaises(ItemNotFound,
-                          self.api.get_item, '1234', self.token)
+                          self.api.read_item, '1234', self.token)
 
     def test_create_item_exception_with_no_token(self):
         self.assertRaises(NotAuthorisedError,
@@ -41,7 +41,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual('a-test-only-id-ABCD', new_item.created_by)
         self.assertEqual('BUG', new_item.properties['type'])
 
-        same_item = self.api.get_item(new_item.id, self.token)
+        same_item = self.api.read_item(new_item.id, self.token)
 
         self.assertEqual(new_item.created_at, same_item.created_at)
         self.assertEqual('a-test-only-id-ABCD', same_item.created_by)

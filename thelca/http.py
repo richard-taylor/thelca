@@ -40,7 +40,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if self.path.startswith('/v1/items/'):
             id = self.path[10:]
             try:
-                item = api.get_item(id, self.token())
+                item = api.read_item(id, self.token())
                 self.send_json(translate.from_item(item))
 
             except NotFoundError:

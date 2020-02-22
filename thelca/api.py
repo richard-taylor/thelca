@@ -14,7 +14,7 @@ class API:
     def __init__(self, version):
         self.version = version
 
-    def get_item(self, id, token):
+    def read_item(self, id, token):
         item = storage.find_item(id)
         user = authority.check_read_item(token, item)
 
@@ -55,6 +55,6 @@ class API:
         if current.created_by != item.created_by:
             raise NotSavedError("created_by cannot be modified")
 
-        storage.save_item(item)
-        logging.item_updated(item, user)
+        storage.modify_item(current, item)
+        logging.item_updated(current, item, user)
         return item
