@@ -2,7 +2,7 @@ import json
 
 from thelca.auth import Authority
 from thelca.error import NotSavedError
-from thelca.model import Item
+from thelca.model import Item, Link
 from thelca.logging import EventLogger
 from thelca.storage import MemoryStore
 
@@ -24,14 +24,7 @@ class API:
     def create_item(self, dictionary, token):
         user = authority.check_create_item(token, dictionary)
 
-        if 'id' in dictionary:
-            raise NotSavedError("id cannot be set externally")
-
-        if 'created_at' in dictionary:
-            raise NotSavedError("created_at cannot be set externally")
-
-        if 'created_by' in dictionary:
-            raise NotSavedError("created_by cannot be set externally")
+        self._no_immutables(dictionary)
 
         if 'properties' in dictionary:
             item = Item(user, dictionary['properties'])
@@ -46,15 +39,85 @@ class API:
         current = storage.find_item(id)
         user = authority.check_update_item(token, current, item)
 
-        if current.id != item.id:
-            raise NotSavedError("id cannot be modified")
-
-        if current.created_at != item.created_at:
-            raise NotSavedError("created_at cannot be modified")
-
-        if current.created_by != item.created_by:
-            raise NotSavedError("created_by cannot be modified")
+        self._fixed_immutables(current, item)
 
         storage.modify_item(current, item)
         logging.item_updated(current, item, user)
         return item
+
+    def read_link(self, id, token):
+        link = storage.find_link(id)
+        user = authority.check_read_link(token, link)
+
+        logging.link_read(link, user)
+        return link
+
+    def create_link(self, dictionary, token):
+        user = authority.check_create_link(token, dictionary)
+
+        self._no_immutables(dictionary)
+
+        if 'properties' in dictionary:
+            link = Link(user, dictionary['properties'])
+        else:
+            link = Link(user)
+
+        self._source_and_target_valid(link)
+
+        storage.save_link(link)
+        logging.link_created(link, user)
+        return link
+
+    def update_link(self, id, link, token):
+        current = storage.find_link(id)
+        user = authority.check_update_link(token, current, link)
+
+        self._fixed_immutables(current, link)
+        self._source_and_target_valid(link)
+
+        storage.modify_link(current, link)
+        logging.link_updated(current, link, user)
+        return link
+
+    def delete_link(self, id, token):
+        link = storage.find_link(id)
+        user = authority.check_delete_link(token, link)
+
+        storage.remove_link(link)
+        logging.link_deleted(link, user)
+        return link
+
+    def _no_immutables(self, dictionary):
+        if 'id' in dictionary:
+            raise NotSavedError("id cannot be set externally")
+
+        if 'created_at' in dictionary:
+            raise NotSavedError("created_at cannot be set externally")
+
+        if 'created_by' in dictionary:
+            raise NotSavedError("created_by cannot be set externally")
+
+    def _fixed_immutables(self, current, proposed):
+        if current.id != proposed.id:
+            raise NotSavedError("id cannot be modified")
+
+        if current.created_at != proposed.created_at:
+            raise NotSavedError("created_at cannot be modified")
+
+        if current.created_by != proposed.created_by:
+            raise NotSavedError("created_by cannot be modified")
+
+    def _source_and_target_valid(self, link):
+        if link.properties is None \
+        or 'source' not in link.properties \
+        or 'target' not in link.properties:
+            raise NotSavedError("source and target must be set")
+
+        if not storage.has_item(link.properties['source']):
+            raise NotSavedError("source must be a valid item id")
+
+        if not storage.has_item(link.properties['target']):
+            raise NotSavedError("target must be a valid item id")
+
+        if link.properties['source'] == link.properties['target']:
+            raise NotSavedError("source and target must be different")

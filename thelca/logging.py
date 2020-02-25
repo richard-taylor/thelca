@@ -40,3 +40,19 @@ class EventLogger:
     def item_updated(self, old_item, new_item, user):
         event = Event("Item updated", new_item, user)
         logging.critical(event.json())
+
+    def link_created(self, link, user):
+        event = Event("Link created", link, user)
+        logging.critical(event.json())
+
+    def link_read(self, link, user):
+        event = Event("Link read", link, user)
+        logging.critical(event.json())
+
+    def link_updated(self, old_link, new_link, user):
+        event = Event("Link updated", new_link, user)
+        logging.critical(event.json())
+
+    def link_deleted(self, link, user):
+        event = Event("Link deleted", link, user)
+        logging.critical(event.json())

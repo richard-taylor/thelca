@@ -7,5 +7,8 @@ class NotFoundError(Exception):
 class ItemNotFound(NotFoundError):
     pass
 
+class LinkNotFound(NotFoundError):
+    pass
+
 class NotSavedError(Exception):
     pass

@@ -14,6 +14,18 @@ class Authority:
     def check_update_item(self, token, current, proposed):
         return self.user_id_from_token(token)
 
+    def check_create_link(self, token, dictionary):
+        return self.user_id_from_token(token)
+
+    def check_read_link(self, token, link):
+        return self.user_id_from_token(token)
+
+    def check_update_link(self, token, current, proposed):
+        return self.user_id_from_token(token)
+
+    def check_delete_link(self, token, link):
+        return self.user_id_from_token(token)
+
     def user_id_from_token(self, token):
         if token is None or token == 'BAAD':
             raise NotAuthorisedError()

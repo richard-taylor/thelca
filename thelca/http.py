@@ -11,8 +11,8 @@ translate = JSON()
 
 class Handler(http.server.BaseHTTPRequestHandler):
 
-    server_version = 'TheElectricCat/0.1'
-    sys_version = ''
+    server_version = 'TheElectricCat/0'
+    sys_version = 'X'
 
     def token(self):
         if 'Authorization' in self.headers:
@@ -20,6 +20,12 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if auth.startswith('Bearer'):
                 return auth[6:].strip()
         raise NotAuthorisedError()
+
+    def send_text(self, text):
+        self.send_response(HTTPStatus.OK)
+        self.send_header('Content-Type', 'text/plain')
+        self.end_headers()
+        self.wfile.write(text.encode('utf-8'))
 
     def send_json(self, json):
         self.send_response(HTTPStatus.OK)
@@ -36,53 +42,91 @@ class Handler(http.server.BaseHTTPRequestHandler):
         else:
             return "{}"
 
+    def do_DELETE(self):
+        try:
+            if self.path.startswith('/v1/links/'):
+                id = self.path[10:]
+                link = api.delete_link(id, self.token())
+                self.send_json(translate.from_link(link))
+
+            else:
+                self.send_error(HTTPStatus.NOT_FOUND)
+
+        except NotFoundError:
+            self.send_error(HTTPStatus.NOT_FOUND)
+        except NotAuthorisedError:
+            self.send_error(HTTPStatus.UNAUTHORIZED)
+
     def do_GET(self):
-        if self.path.startswith('/v1/items/'):
-            id = self.path[10:]
-            try:
+        try:
+            if self.path == '/':
+                self.send_text('Meeeow\n')
+
+            elif self.path.startswith('/v1/items/'):
+                id = self.path[10:]
                 item = api.read_item(id, self.token())
                 self.send_json(translate.from_item(item))
 
-            except NotFoundError:
+            elif self.path.startswith('/v1/links/'):
+                id = self.path[10:]
+                link = api.read_link(id, self.token())
+                self.send_json(translate.from_link(link))
+
+            else:
                 self.send_error(HTTPStatus.NOT_FOUND)
-            except NotAuthorisedError:
-                self.send_error(HTTPStatus.UNAUTHORIZED)
-        else:
+
+        except NotFoundError:
             self.send_error(HTTPStatus.NOT_FOUND)
+        except NotAuthorisedError:
+            self.send_error(HTTPStatus.UNAUTHORIZED)
 
     def do_POST(self):
-        if self.path == '/v1/items':
+        try:
             json = self.receive_json()
-            try:
-                dict = translate.to_dictionary(json)
+            dict = translate.to_dictionary(json)
+
+            if self.path == '/v1/items':
                 item = api.create_item(dict, self.token())
                 self.send_json(translate.from_item(item))
 
-            except TranslationError as error:
-                self.send_error(HTTPStatus.BAD_REQUEST, str(error))
-            except NotSavedError as error:
-                self.send_error(HTTPStatus.BAD_REQUEST, str(error))
-            except NotAuthorisedError:
-                self.send_error(HTTPStatus.UNAUTHORIZED)
-        else:
-            self.send_error(HTTPStatus.NOT_FOUND)
+            elif self.path == '/v1/links':
+                link = api.create_link(dict, self.token())
+                self.send_json(translate.from_link(link))
+
+            else:
+                self.send_error(HTTPStatus.NOT_FOUND)
+
+        except TranslationError as error:
+            self.send_error(HTTPStatus.BAD_REQUEST, str(error))
+        except NotSavedError as error:
+            self.send_error(HTTPStatus.BAD_REQUEST, str(error))
+        except NotAuthorisedError:
+            self.send_error(HTTPStatus.UNAUTHORIZED)
 
     def do_PUT(self):
-        if self.path.startswith('/v1/items/'):
-            id = self.path[10:]
+        try:
             json = self.receive_json()
-            try:
+
+            if self.path.startswith('/v1/items/'):
+                id = self.path[10:]
                 item = translate.to_item(json)
                 api.update_item(id, item, self.token())
                 self.send_json(translate.from_item(item))
 
-            except TranslationError as error:
-                self.send_error(HTTPStatus.BAD_REQUEST, str(error))
-            except NotFoundError:
+            elif self.path.startswith('/v1/links/'):
+                id = self.path[10:]
+                link = translate.to_link(json)
+                api.update_link(id, link, self.token())
+                self.send_json(translate.from_link(link))
+
+            else:
                 self.send_error(HTTPStatus.NOT_FOUND)
-            except NotSavedError as error:
-                self.send_error(HTTPStatus.BAD_REQUEST, str(error))
-            except NotAuthorisedError:
-                self.send_error(HTTPStatus.UNAUTHORIZED)
-        else:
+
+        except TranslationError as error:
+            self.send_error(HTTPStatus.BAD_REQUEST, str(error))
+        except NotFoundError:
             self.send_error(HTTPStatus.NOT_FOUND)
+        except NotSavedError as error:
+            self.send_error(HTTPStatus.BAD_REQUEST, str(error))
+        except NotAuthorisedError:
+            self.send_error(HTTPStatus.UNAUTHORIZED)
