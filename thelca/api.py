@@ -26,10 +26,7 @@ class API:
 
         self._no_immutables(dictionary)
 
-        if 'properties' in dictionary:
-            item = Item(user, dictionary['properties'])
-        else:
-            item = Item(user)
+        item = Item(user, dictionary.get('properties'))
 
         storage.save_item(item)
         logging.item_created(item, user)
@@ -57,10 +54,10 @@ class API:
 
         self._no_immutables(dictionary)
 
-        if 'properties' in dictionary:
-            link = Link(user, dictionary['properties'])
-        else:
-            link = Link(user)
+        link = Link(user,
+                    dictionary.get('source'),
+                    dictionary.get('target'),
+                    dictionary.get('properties'))
 
         self._source_and_target_valid(link)
 
@@ -108,16 +105,14 @@ class API:
             raise NotSavedError("created_by cannot be modified")
 
     def _source_and_target_valid(self, link):
-        if link.properties is None \
-        or 'source' not in link.properties \
-        or 'target' not in link.properties:
+        if link.source is None or link.target is None:
             raise NotSavedError("source and target must be set")
 
-        if not storage.has_item(link.properties['source']):
+        if not storage.has_item(link.source):
             raise NotSavedError("source must be a valid item id")
 
-        if not storage.has_item(link.properties['target']):
+        if not storage.has_item(link.target):
             raise NotSavedError("target must be a valid item id")
 
-        if link.properties['source'] == link.properties['target']:
+        if link.source == link.target:
             raise NotSavedError("source and target must be different")

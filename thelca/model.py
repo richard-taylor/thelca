@@ -18,6 +18,8 @@ class Item(Trackable):
         self.properties = properties
 
 class Link(Trackable):
-    def __init__(self, created_by = None, properties = None):
+    def __init__(self, created_by = None, source = None, target = None, properties = None):
         super().__init__(created_by)
+        self.source = source
+        self.target = target
         self.properties = properties

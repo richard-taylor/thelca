@@ -29,14 +29,21 @@ class TestModel(unittest.TestCase):
         self.assertTrue(link.id is None)
         self.assertTrue(link.created_at is None)
         self.assertTrue(link.created_by is None)
+        self.assertTrue(link.source is None)
+        self.assertTrue(link.target is None)
         self.assertTrue(link.properties is None)
 
     def test_create_link(self):
-        link = Link(self.user, {'TYPE': 'EXPLAINS'})
+        item1 = Item(self.user)
+        item2 = Item(self.user)
+
+        link = Link(self.user, item1.id, item2.id, {'TYPE': 'EXPLAINS'})
 
         self.assertFalse(link.id is None)
         self.assertFalse(link.created_at is None)
         self.assertEqual(self.user, link.created_by)
+        self.assertEqual(item1.id, link.source)
+        self.assertEqual(item2.id, link.target)
         self.assertEqual('EXPLAINS', link.properties['TYPE'])
 
 if __name__ == '__main__':

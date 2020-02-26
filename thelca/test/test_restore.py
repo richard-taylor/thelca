@@ -28,9 +28,9 @@ class TestRestore(unittest.TestCase):
 
         link = thelca.api.storage.find_link("0b25d518-0b10-462e-a936-859ec29fd4cc")
         self.assertEqual("a-test-only-id-abcd", link.created_by)
-        self.assertDictEqual({"source": "bd671302-50a4-496d-94ac-1851f1571a80",
-                              "target": "daf625aa-fc27-4f42-819a-c4a293af0018",
-                              "type": "BLOCKS"}, link.properties)
+        self.assertEqual("bd671302-50a4-496d-94ac-1851f1571a80", link.source)
+        self.assertEqual("daf625aa-fc27-4f42-819a-c4a293af0018", link.target)
+        self.assertDictEqual({"type": "BLOCKS"}, link.properties)
 
         self.assertRaises(LinkNotFound,
             thelca.api.storage.find_link,

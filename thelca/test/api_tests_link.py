@@ -21,10 +21,10 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
         response3 = requests.post(cls.url, headers = jwt(), data = '''
         {{
             "properties": {{
-                "source": "{0}",
-                "target": "{1}",
                 "type": "BLOCKS"
-            }}
+            }},
+            "source": "{0}",
+            "target": "{1}"
         }}
         '''.format(cls.item_1_id, cls.item_2_id))
         cls.link = response3.json()
@@ -81,10 +81,8 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
     def test_post_fails_for_invalid_source(self):
         response = requests.post(self.url, headers = jwt(), data = '''
         {{
-            "properties": {{
-                "source": "nonsense",
-                "target": "{0}"
-            }}
+            "source": "nonsense",
+            "target": "{0}"
         }}
         '''.format(self.item_1_id))
 
@@ -94,10 +92,8 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
     def test_post_fails_for_invalid_target(self):
         response = requests.post(self.url, headers = jwt(), data = '''
         {{
-            "properties": {{
-                "source": "{0}",
-                "target": "nonsense"
-            }}
+            "source": "{0}",
+            "target": "nonsense"
         }}
         '''.format(self.item_1_id))
 
@@ -107,10 +103,8 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
     def test_post_fails_for_source_same_as_target(self):
         response = requests.post(self.url, headers = jwt(), data = '''
         {{
-            "properties": {{
-                "source": "{0}",
-                "target": "{0}"
-            }}
+            "source": "{0}",
+            "target": "{0}"
         }}
         '''.format(self.item_1_id))
 
@@ -120,10 +114,8 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
     def test_post_succeeds_for_valid_source_and_target(self):
         response = requests.post(self.url, headers = jwt(), data = '''
         {{
-            "properties": {{
-                "source": "{0}",
-                "target": "{1}"
-            }}
+            "source": "{0}",
+            "target": "{1}"
         }}
         '''.format(self.item_1_id, self.item_2_id))
 
@@ -133,10 +125,10 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
         post_response = requests.post(self.url, headers = jwt(), data = '''
         {{
             "properties": {{
-                "source": "{0}",
-                "target": "{1}",
                 "type": "IMPLEMENTS"
-            }}
+            }},
+            "source": "{0}",
+            "target": "{1}"
         }}
         '''.format(self.item_1_id, self.item_2_id))
         self.assertEqual(200, post_response.status_code)
@@ -154,10 +146,10 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
         post_response = requests.post(self.url, headers = jwt(), data = '''
         {{
             "properties": {{
-                "source": "{0}",
-                "target": "{1}",
                 "type": "IMPLEMENTS"
-            }}
+            }},
+            "source": "{0}",
+            "target": "{1}"
         }}
         '''.format(self.item_1_id, self.item_2_id))
         self.assertEqual(200, post_response.status_code)
@@ -178,11 +170,11 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
         response = requests.post(self.url, headers = jwt(), data = '''
         {{
             "properties": {{
-                "source": "{0}",
-                "target": "{1}",
                 "type": "IMPLEMENTS"
             }},
-            "secret": "shhhhhhhhhhh"
+            "secret": "shhhhhhhhhhh",
+            "source": "{0}",
+            "target": "{1}"
         }}
         '''.format(self.item_1_id, self.item_2_id))
 
@@ -193,6 +185,8 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
         self.assertIn('created_at', json)
         self.assertIn('created_by', json)
         self.assertIn('properties', json)
+        self.assertIn('source', json)
+        self.assertIn('target', json)
 
         self.assertNotIn('secret', json)
 
@@ -254,7 +248,7 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
 
     def test_put_fails_if_source_invalid(self):
         put_json = deepcopy(self.link)
-        put_json['properties']['source'] = 'rubbish'
+        put_json['source'] = 'rubbish'
 
         put_response = requests.put(self.url + '/' + self.link['id'], data = dumps(put_json), headers = jwt())
         self.assertEqual(400, put_response.status_code)
@@ -262,7 +256,7 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
 
     def test_put_fails_if_target_invalid(self):
         put_json = deepcopy(self.link)
-        put_json['properties']['target'] = 'rubbish'
+        put_json['target'] = 'rubbish'
 
         put_response = requests.put(self.url + '/' + self.link['id'], data = dumps(put_json), headers = jwt())
         self.assertEqual(400, put_response.status_code)
@@ -270,7 +264,7 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
 
     def test_put_fails_if_source_same_as_target(self):
         put_json = deepcopy(self.link)
-        put_json['properties']['target'] = put_json['properties']['source']
+        put_json['target'] = put_json['source']
 
         put_response = requests.put(self.url + '/' + self.link['id'], data = dumps(put_json), headers = jwt())
         self.assertEqual(400, put_response.status_code)
