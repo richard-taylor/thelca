@@ -15,7 +15,7 @@ class TestModel(unittest.TestCase):
         self.assertTrue(item.properties is None)
 
     def test_create_item(self):
-        item = Item(self.user, {'TYPE': 'EPIC', 'DESCRIPTION': 'big'})
+        item = Item(self.user, {'properties': {'TYPE': 'EPIC', 'DESCRIPTION': 'big'}})
 
         self.assertFalse(item.id is None)
         self.assertFalse(item.created_at is None)
@@ -37,7 +37,9 @@ class TestModel(unittest.TestCase):
         item1 = Item(self.user)
         item2 = Item(self.user)
 
-        link = Link(self.user, item1.id, item2.id, {'TYPE': 'EXPLAINS'})
+        link = Link(self.user, {'source': item1.id,
+                                'target': item2.id,
+                                'properties': {'TYPE': 'EXPLAINS'}})
 
         self.assertFalse(link.id is None)
         self.assertFalse(link.created_at is None)

@@ -23,10 +23,11 @@ class API:
 
     def create_item(self, dictionary, token):
         user = authority.check_create_item(token, dictionary)
+        try:
+            item = Item(user, dictionary)
 
-        self._no_immutables(dictionary)
-
-        item = Item(user, dictionary.get('properties'))
+        except ValueError as error:
+            raise NotSavedError(error)
 
         storage.save_item(item)
         logging.item_created(item, user)
@@ -35,8 +36,11 @@ class API:
     def update_item(self, id, item, token):
         current = storage.find_item(id)
         user = authority.check_update_item(token, current, item)
+        try:
+            current.check_update(item)
 
-        self._fixed_immutables(current, item)
+        except ValueError as error:
+            raise NotSavedError(error)
 
         storage.modify_item(current, item)
         logging.item_updated(current, item, user)
@@ -51,15 +55,12 @@ class API:
 
     def create_link(self, dictionary, token):
         user = authority.check_create_link(token, dictionary)
+        try:
+            link = Link(user, dictionary)
+            link.check_endpoints(storage)
 
-        self._no_immutables(dictionary)
-
-        link = Link(user,
-                    dictionary.get('source'),
-                    dictionary.get('target'),
-                    dictionary.get('properties'))
-
-        self._source_and_target_valid(link)
+        except ValueError as error:
+            raise NotSavedError(error)
 
         storage.save_link(link)
         logging.link_created(link, user)
@@ -68,9 +69,12 @@ class API:
     def update_link(self, id, link, token):
         current = storage.find_link(id)
         user = authority.check_update_link(token, current, link)
+        try:
+            current.check_update(link)
+            link.check_endpoints(storage)
 
-        self._fixed_immutables(current, link)
-        self._source_and_target_valid(link)
+        except ValueError as error:
+            raise NotSavedError(error)
 
         storage.modify_link(current, link)
         logging.link_updated(current, link, user)
@@ -83,36 +87,3 @@ class API:
         storage.remove_link(link)
         logging.link_deleted(link, user)
         return link
-
-    def _no_immutables(self, dictionary):
-        if 'id' in dictionary:
-            raise NotSavedError("id cannot be set externally")
-
-        if 'created_at' in dictionary:
-            raise NotSavedError("created_at cannot be set externally")
-
-        if 'created_by' in dictionary:
-            raise NotSavedError("created_by cannot be set externally")
-
-    def _fixed_immutables(self, current, proposed):
-        if current.id != proposed.id:
-            raise NotSavedError("id cannot be modified")
-
-        if current.created_at != proposed.created_at:
-            raise NotSavedError("created_at cannot be modified")
-
-        if current.created_by != proposed.created_by:
-            raise NotSavedError("created_by cannot be modified")
-
-    def _source_and_target_valid(self, link):
-        if link.source is None or link.target is None:
-            raise NotSavedError("source and target must be set")
-
-        if not storage.has_item(link.source):
-            raise NotSavedError("source must be a valid item id")
-
-        if not storage.has_item(link.target):
-            raise NotSavedError("target must be a valid item id")
-
-        if link.source == link.target:
-            raise NotSavedError("source and target must be different")

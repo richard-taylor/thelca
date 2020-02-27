@@ -24,7 +24,7 @@ class TestTranslator(unittest.TestCase):
         self.assertEqual('{"created_at": null, "created_by": null, "id": null, "properties": null}', json)
 
     def test_item_to_json(self):
-        item = Item(self.user, {'type': 'STORY'})
+        item = Item(self.user, {'properties': {'type': 'STORY'}})
         json = self.translate.from_item(item)
 
         self.assertTrue('"created_at": "' in json)

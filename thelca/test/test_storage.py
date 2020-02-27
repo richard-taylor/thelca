@@ -12,8 +12,8 @@ class TestStorage(unittest.TestCase):
         self.user = '1-2-3-4'
 
     def test_save_item_and_find_item(self):
-        item1 = Item(self.user, {"type": "ABC"})
-        item2 = Item(self.user, {"type": "123"})
+        item1 = Item(self.user, {'properties': {"type": "ABC"}})
+        item2 = Item(self.user, {'properties': {"type": "123"}})
 
         self.store.save_item(item1)
         self.store.save_item(item2)
@@ -30,7 +30,7 @@ class TestStorage(unittest.TestCase):
         self.assertEqual('123', found2.properties['type'])
 
     def test_modify_item(self):
-        original_item = Item(self.user, {"type": "ABC"})
+        original_item = Item(self.user, {'properties': {"type": "ABC"}})
 
         self.store.save_item(original_item)
 
@@ -45,8 +45,8 @@ class TestStorage(unittest.TestCase):
         self.assertEqual('DEF', changed.properties['type'])
 
     def test_find_non_existent_item(self):
-        item1 = Item(self.user, {"type": "ABC"})
-        item2 = Item(self.user, {"type": "123"})
+        item1 = Item(self.user, {'properties': {"type": "ABC"}})
+        item2 = Item(self.user, {'properties': {"type": "123"}})
 
         self.store.save_item(item1)
         self.store.save_item(item2)
