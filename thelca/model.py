@@ -12,6 +12,14 @@ class Trackable:
             self.created_by = created_by
             self.created_at = current_time_UTC()
 
+    @classmethod
+    def from_dictionary(cls, dictionary):
+        object = cls()
+        for key in vars(object):
+            if key in dictionary:
+                object.__dict__[key] = dictionary[key]
+        return object
+
     def check_immutables(self, dictionary):
         if 'id' in dictionary:
             raise ValueError("id cannot be set externally")
@@ -36,10 +44,10 @@ class Item(Trackable):
     def __init__(self, created_by = None, dictionary = None):
         super().__init__(created_by)
         if dictionary is None:
-            self.properties = None
+            self.properties = {}
         else:
             self.check_immutables(dictionary)
-            self.properties = dictionary.get('properties')
+            self.properties = dictionary.get('properties', {})
 
 class Link(Trackable):
     def __init__(self, created_by = None, dictionary = None):
@@ -47,12 +55,12 @@ class Link(Trackable):
         if dictionary is None:
             self.source = None
             self.target = None
-            self.properties = None
+            self.properties = {}
         else:
             self.check_immutables(dictionary)
             self.source = dictionary.get('source')
             self.target = dictionary.get('target')
-            self.properties = dictionary.get('properties')
+            self.properties = dictionary.get('properties', {})
 
     def check_endpoints(self, storage):
         if self.source is None or self.target is None:

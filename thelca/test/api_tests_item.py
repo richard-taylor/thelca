@@ -61,7 +61,7 @@ class TestBlackBoxItemAPI(unittest.TestCase):
         self.assertIsNotNone(json['created_at'])
         self.assertIsNotNone(json['created_by'])
 
-        self.assertIsNone(json['properties'])
+        self.assertDictEqual({}, json['properties'])
 
     def test_get_succeeds_for_new_item(self):
         post_response = requests.post(self.url, data = '{"properties": {"a": "b"}}', headers = jwt())

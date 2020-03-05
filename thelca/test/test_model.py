@@ -12,7 +12,7 @@ class TestModel(unittest.TestCase):
         self.assertTrue(item.id is None)
         self.assertTrue(item.created_at is None)
         self.assertTrue(item.created_by is None)
-        self.assertTrue(item.properties is None)
+        self.assertTrue(item.properties == {})
 
     def test_create_item(self):
         item = Item(self.user, {'properties': {'TYPE': 'EPIC', 'DESCRIPTION': 'big'}})
@@ -31,7 +31,7 @@ class TestModel(unittest.TestCase):
         self.assertTrue(link.created_by is None)
         self.assertTrue(link.source is None)
         self.assertTrue(link.target is None)
-        self.assertTrue(link.properties is None)
+        self.assertTrue(link.properties == {})
 
     def test_create_link(self):
         item1 = Item(self.user)
