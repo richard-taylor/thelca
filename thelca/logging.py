@@ -10,7 +10,10 @@ class Event:
         self.time = current_time_UTC()
 
         if entity is not None:
-            self.value = entity.id if 'read' in type else vars(entity)
+            if 'read' in type or 'deleted' in type:
+                self.value = entity.id
+            else:
+                self.value = vars(entity)
 
     def json(self):
         return dumps(vars(self), sort_keys=True)

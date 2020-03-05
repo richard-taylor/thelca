@@ -17,7 +17,7 @@ class MemoryStore:
     def save_item(self, item):
         self.items[item.id] = item
 
-    def modify_item(self, old_item, new_item):
+    def modify_item(self, new_item):
         self.items[new_item.id] = new_item
 
     def find_link(self, id):
@@ -29,8 +29,8 @@ class MemoryStore:
     def save_link(self, link):
         self.links[link.id] = link
 
-    def modify_link(self, old_link, new_link):
+    def modify_link(self, new_link):
         self.links[new_link.id] = new_link
 
-    def remove_link(self, link):
-        self.links.pop(link.id, None)
+    def remove_link(self, id):
+        self.links.pop(id, None)

@@ -37,7 +37,7 @@ class TestStorage(unittest.TestCase):
         new_item = deepcopy(original_item)
         new_item.properties['type'] = 'DEF'
 
-        self.store.modify_item(original_item, new_item)
+        self.store.modify_item(new_item)
 
         changed = self.store.find_item(original_item.id)
 

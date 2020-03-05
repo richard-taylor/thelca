@@ -15,7 +15,7 @@ def from_event_log(filename):
 
             elif type == 'Item updated':
                 item = Item.from_dictionary(json['value'])
-                thelca.api.storage.modify_item(None, item)
+                thelca.api.storage.modify_item(item)
 
             elif type == 'Link created':
                 link = Link.from_dictionary(json['value'])
@@ -23,8 +23,7 @@ def from_event_log(filename):
 
             elif type == 'Link updated':
                 link = Link.from_dictionary(json['value'])
-                thelca.api.storage.modify_link(None, link)
+                thelca.api.storage.modify_link(link)
 
             elif type == 'Link deleted':
-                link = Link.from_dictionary(json['value'])
-                thelca.api.storage.remove_link(link)
+                thelca.api.storage.remove_link(json['value'])

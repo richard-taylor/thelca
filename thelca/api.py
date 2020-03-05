@@ -42,7 +42,7 @@ class API:
         except ValueError as error:
             raise NotSavedError(error)
 
-        storage.modify_item(current, item)
+        storage.modify_item(item)
         logging.item_updated(current, item, user)
         return item
 
@@ -76,7 +76,7 @@ class API:
         except ValueError as error:
             raise NotSavedError(error)
 
-        storage.modify_link(current, link)
+        storage.modify_link(link)
         logging.link_updated(current, link, user)
         return link
 
@@ -84,6 +84,6 @@ class API:
         link = storage.find_link(id)
         user = authority.check_delete_link(token, link)
 
-        storage.remove_link(link)
+        storage.remove_link(id)
         logging.link_deleted(link, user)
         return link
