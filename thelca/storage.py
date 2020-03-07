@@ -11,6 +11,9 @@ class MemoryStore:
         except KeyError:
             raise ItemNotFound()
 
+    def find_items(self, key, value):
+        return [i for i in self.items.values() if i.properties.get(key) == value]
+
     def has_item(self, id):
         return id in self.items
 
@@ -34,3 +37,12 @@ class MemoryStore:
 
     def remove_link(self, id):
         self.links.pop(id, None)
+
+    def find_links_source(self, id):
+        return [x for x in self.links.values() if x.source == id]
+
+    def find_links_target(self, id):
+        return [x for x in self.links.values() if x.target == id]
+
+    def find_links_either(self, id):
+        return [x for x in self.links.values() if x.source == id or x.target == id]

@@ -12,6 +12,8 @@ class Event:
         if entity is not None:
             if 'read' in type or 'deleted' in type:
                 self.value = entity.id
+            elif 'search' in type:
+                self.value = [x.id for x in entity]
             else:
                 self.value = vars(entity)
 
@@ -44,6 +46,10 @@ class EventLogger:
         event = Event("Item updated", new_item, user)
         logging.critical(event.json())
 
+    def item_search(self, items, user):
+        event = Event("Item search", items, user)
+        logging.critical(event.json())
+
     def link_created(self, link, user):
         event = Event("Link created", link, user)
         logging.critical(event.json())
@@ -58,4 +64,8 @@ class EventLogger:
 
     def link_deleted(self, link, user):
         event = Event("Link deleted", link, user)
+        logging.critical(event.json())
+
+    def link_search(self, links, user):
+        event = Event("Link search", links, user)
         logging.critical(event.json())

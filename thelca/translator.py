@@ -20,6 +20,9 @@ class JSON:
     def from_item(self, item):
         return json.dumps(vars(item), sort_keys=True)
 
+    def from_item_list(self, item_list):
+        return json.dumps([vars(item) for item in item_list], sort_keys=True)
+
     def to_item(self, string):
         try:
             return Item.from_dictionary(json.loads(string))
@@ -28,6 +31,9 @@ class JSON:
 
     def from_link(self, link):
         return json.dumps(vars(link), sort_keys=True)
+
+    def from_link_list(self, link_list):
+        return json.dumps([vars(link) for link in link_list], sort_keys=True)
 
     def to_link(self, string):
         try:

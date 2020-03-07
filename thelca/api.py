@@ -46,6 +46,16 @@ class API:
         logging.item_updated(current, item, user)
         return item
 
+    def search_items(self, query, token):
+        items = []
+        if '=' in query:
+            (key, value) = query.split('=', 1)
+            items = storage.find_items(key, value)
+
+        (user, filtered_items) = authority.filter_readable_items(token, items)
+        logging.item_search(filtered_items, user)
+        return filtered_items
+
     def read_link(self, id, token):
         link = storage.find_link(id)
         user = authority.check_read_link(token, link)
@@ -87,3 +97,18 @@ class API:
         storage.remove_link(id)
         logging.link_deleted(link, user)
         return link
+
+    def search_links(self, query, token):
+        links = []
+        if '=' in query:
+            (key, value) = query.split('=', 1)
+            if key == 'source':
+                links = storage.find_links_source(value)
+            elif key == 'target':
+                links = storage.find_links_target(value)
+            elif key == 'either':
+                links = storage.find_links_either(value)
+
+        (user, filtered_links) = authority.filter_readable_links(token, links)
+        logging.link_search(filtered_links, user)
+        return filtered_links

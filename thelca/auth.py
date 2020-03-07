@@ -11,6 +11,9 @@ class Authority:
     def check_read_item(self, token, item):
         return self.user_id_from_token(token)
 
+    def filter_readable_items(self, token, items):
+        return (self.user_id_from_token(token), items)
+
     def check_update_item(self, token, current, proposed):
         return self.user_id_from_token(token)
 
@@ -19,6 +22,9 @@ class Authority:
 
     def check_read_link(self, token, link):
         return self.user_id_from_token(token)
+
+    def filter_readable_links(self, token, links):
+        return (self.user_id_from_token(token), links)
 
     def check_update_link(self, token, current, proposed):
         return self.user_id_from_token(token)

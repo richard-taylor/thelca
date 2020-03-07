@@ -67,10 +67,20 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 item = api.read_item(id, self.token())
                 self.send_json(translate.from_item(item))
 
+            elif self.path.startswith('/v1/items?'):
+                query = self.path[10:]
+                items = api.search_items(query, self.token())
+                self.send_json(translate.from_item_list(items))
+
             elif self.path.startswith('/v1/links/'):
                 id = self.path[10:]
                 link = api.read_link(id, self.token())
                 self.send_json(translate.from_link(link))
+
+            elif self.path.startswith('/v1/links?'):
+                query = self.path[10:]
+                links = api.search_links(query, self.token())
+                self.send_json(translate.from_link_list(links))
 
             else:
                 self.send_error(HTTPStatus.NOT_FOUND)
