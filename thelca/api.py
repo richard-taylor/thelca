@@ -14,6 +14,10 @@ class API:
     def __init__(self, version):
         self.version = version
 
+    def read_service(self, service, token):
+        user = authority.check_read_service(token, service)
+        logging.service_read(service, user)
+
     def read_item(self, id, token):
         item = storage.find_item(id)
         user = authority.check_read_item(token, item)
