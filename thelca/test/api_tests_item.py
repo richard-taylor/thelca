@@ -9,7 +9,7 @@ def jwt():
 class TestBlackBoxItemAPI(unittest.TestCase):
 
     def setUp(self):
-        self.url = 'http://localhost:2207/v1/items'
+        self.url = 'https://localhost:2207/v1/items'
 
     def test_get_fails_with_unauthorized_if_no_token_sent(self):
         response = requests.get(self.url + '/1234')

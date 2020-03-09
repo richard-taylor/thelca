@@ -11,13 +11,13 @@ class TestBlackBoxLinkAPI(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        url_items = 'http://localhost:2207/v1/items'
+        url_items = 'https://localhost:2207/v1/items'
         response1 = requests.post(url_items, data = '{}', headers = jwt())
         response2 = requests.post(url_items, data = '{}', headers = jwt())
         cls.item_1_id = response1.json()['id']
         cls.item_2_id = response2.json()['id']
 
-        cls.url = 'http://localhost:2207/v1/links'
+        cls.url = 'https://localhost:2207/v1/links'
         response3 = requests.post(cls.url, headers = jwt(), data = '''
         {{
             "properties": {{

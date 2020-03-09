@@ -7,7 +7,7 @@ def jwt():
 class TestBlackBoxDocumentationAPI(unittest.TestCase):
 
     def setUp(self):
-        self.url = 'http://localhost:2207/'
+        self.url = 'https://localhost:2207/'
 
     def test_get_documentation_without_a_token(self):
         response = requests.get(self.url)

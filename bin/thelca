@@ -1,12 +1,21 @@
 
 import argparse
 import http.server
+import ssl
 
 from thelca.http import Handler
 from thelca.logging import EventLogger
 
 # parse the command-line
 parser = argparse.ArgumentParser(description='thelca')
+
+parser.add_argument('-c', '--cert',
+    help='file containing the TLS public certificate (default %(default)s)',
+    default='config/cert.pem')
+
+parser.add_argument('-k', '--key',
+    help='file containing the TLS private key (default %(default)s)',
+    default='config/key.pem')
 
 parser.add_argument('-l', '--logfile',
     help='file to store the event log in (default %(default)s)',
@@ -30,6 +39,8 @@ logging = EventLogger(args.logfile)
 try:
     logging.server_start(args)
     server = http.server.HTTPServer(('', args.port), Handler)
+    server.socket = ssl.wrap_socket(server.socket,
+                    keyfile=args.key, certfile=args.cert, server_side=True)
     server.serve_forever()
 
 except KeyboardInterrupt:

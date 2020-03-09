@@ -14,7 +14,7 @@ class TestBlackBoxSearchAPI(unittest.TestCase):
         # item_1 is a PROJECT that CONTAINS an EPIC item_2 and
         # item_3 is a STORY that IMPLEMENTS part of item_2.
 
-        cls.url_items = 'http://localhost:2207/v1/items'
+        cls.url_items = 'https://localhost:2207/v1/items'
         cls.item_1 = requests.post(cls.url_items, headers = jwt(), data = '''
         {
             "properties": {
@@ -34,7 +34,7 @@ class TestBlackBoxSearchAPI(unittest.TestCase):
             }
         }''').json()
 
-        cls.url_links = 'http://localhost:2207/v1/links'
+        cls.url_links = 'https://localhost:2207/v1/links'
         cls.link_12 = requests.post(cls.url_links, headers = jwt(), data = '''
         {{
             "properties": {{
